@@ -45,7 +45,8 @@ import {
     WaiteBridgeSteps,
     LedgerAction,
     IAccountSummary,
-    RegisterAssistantStepValue
+    RegisterAssistantStepValue,
+    ISystemInfo
 } from "../../interfaces";
 import {
     AmountMismatchError,
@@ -1798,5 +1799,14 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
         }
 
         return res.data.assistant;
+    }
+
+    public async getSystemInfo(): Promise<ISystemInfo> {
+        const res = await Network.get(await this.relay.getEndpoint(`/v1/system/info`));
+        if (res.code !== 0 || res.data === undefined) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        return res.data;
     }
 }

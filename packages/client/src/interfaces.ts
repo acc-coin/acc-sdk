@@ -687,3 +687,19 @@ export interface IShopSummary {
     sideChain: IBalance;
     protocolFees: IProtocolFees;
 }
+
+export interface ISystemInfo {
+    token: {
+        symbol: string;
+    },
+    point: {
+        precision: number,
+        equivalentCurrency: string;
+    },
+    language: string,
+    support: {
+        chainBridge: boolean,
+        loyaltyBridge: boolean,
+        exchange: boolean
+    }
+}
