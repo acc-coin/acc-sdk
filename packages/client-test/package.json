@@ -44,10 +44,11 @@
         "12-to_be_receive:user_total": "npx ts-node scripts/12-to_be_receve/user_total.ts",
         "12-to_be_receive:shop": "npx ts-node scripts/12-to_be_receve/shop.ts",
         "12-to_be_receive:shop_total": "npx ts-node scripts/12-to_be_receve/shop_total.ts",
-        "13-provider:register_provider": "npx ts-node scripts/13-provider/register_provider.ts",
         "13-provider:is_provider": "npx ts-node scripts/13-provider/is_provider.ts",
+        "13-provider:register_provider": "npx ts-node scripts/13-provider/register_provider.ts",
         "13-provider:register_assistant": "npx ts-node scripts/13-provider/register_assistant.ts",
-        "13-provider:unregister_assistant": "npx ts-node scripts/13-provider/unregister_assistant.ts"
+        "13-provider:unregister_assistant": "npx ts-node scripts/13-provider/unregister_assistant.ts",
+        "13-provider:register_provider_forced": "npx ts-node scripts/13-provider/register_provider_forced.ts"
     },
     "directories": {
         "test": "test"
