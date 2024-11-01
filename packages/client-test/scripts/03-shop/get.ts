@@ -26,7 +26,11 @@ async function main() {
     console.log(`delegator: ${info.delegator}`);
     console.log(`providedAmount: ${new BOACoin(info.providedAmount).toDisplayString(true, 2)}`);
     console.log(`usedAmount: ${new BOACoin(info.usedAmount).toDisplayString(true, 2)}`);
+    console.log(`collectedAmount: ${new BOACoin(info.collectedAmount).toDisplayString(true, 2)}`);
     console.log(`refundedAmount: ${new BOACoin(info.refundedAmount).toDisplayString(true, 2)}`);
+
+    const refundable = await client.shop.getRefundableAmount(shopInfo.shopId);
+    console.log(`refundableAmount: ${new BOACoin(refundable.refundableAmount).toDisplayString(true, 2)}`);
 }
 
 main().catch((error) => {

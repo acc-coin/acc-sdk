@@ -48,7 +48,14 @@
         "13-provider:register_provider": "npx ts-node scripts/13-provider/register_provider.ts",
         "13-provider:register_assistant": "npx ts-node scripts/13-provider/register_assistant.ts",
         "13-provider:unregister_assistant": "npx ts-node scripts/13-provider/unregister_assistant.ts",
-        "13-provider:register_provider_forced": "npx ts-node scripts/13-provider/register_provider_forced.ts"
+        "13-provider:register_provider_forced": "npx ts-node scripts/13-provider/register_provider_forced.ts",
+        "13-provider:unregister_provider_forced": "npx ts-node scripts/13-provider/unregister_provider_forced.ts",
+        "14-agent:register_agent_provision": "npx ts-node scripts/14-agent/register_agent_provision.ts",
+        "14-agent:unregister_agent_provision": "npx ts-node scripts/14-agent/unregister_agent_provision.ts",
+        "14-agent:register_agent_refund": "npx ts-node scripts/14-agent/register_agent_refund.ts",
+        "14-agent:unregister_agent_refund": "npx ts-node scripts/14-agent/unregister_agent_refund.ts",
+        "14-agent:register_agent_withdrawal": "npx ts-node scripts/14-agent/register_agent_withdrawal.ts",
+        "14-agent:unregister_agent_withdrawal": "npx ts-node scripts/14-agent/unregister_agent_withdrawal.ts"
     },
     "directories": {
         "test": "test"
@@ -70,7 +77,7 @@
         "@types/mocha": "^10.0.0",
         "@types/node": "^12.20.43",
         "@types/urijs": "^1.19.12",
-        "acc-sdk-client-v2": "~2.11.0",
+        "acc-sdk-client-v2": "~2.13.0",
         "assert": "^2.0.0",
         "axios": "^1.6.7",
         "beautify": "^0.0.8",

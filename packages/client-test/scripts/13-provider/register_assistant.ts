@@ -1,6 +1,5 @@
 import { Helper } from "../utils";
 import { Client, Context, ContextBuilder, NormalSteps } from "acc-sdk-client-v2";
-import { BOACoin } from "../../src/Amount";
 
 async function main() {
     const userInfo = Helper.loadUserInfo();

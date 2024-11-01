@@ -45,6 +45,7 @@ import {
     WaiteBridgeSteps,
     LedgerAction,
     IAccountSummary,
+    RegisterAgentStepValue,
     RegisterAssistantStepValue,
     ISystemInfo
 } from "../../interfaces";
@@ -87,7 +88,7 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
 
     // region Balance
     public async getSummary(account: string): Promise<IAccountSummary> {
-        const res = await Network.get(await this.relay.getEndpoint(`/v1/summary/account/${account}`));
+        const res = await Network.get(await this.relay.getEndpoint(`/v2/summary/account/${account}`));
         if (res.code !== 0 || res.data === undefined) {
             throw new InternalServerError(res?.error?.message ?? "");
         }
@@ -108,6 +109,15 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
                     symbol: res.data.exchangeRate.currency.symbol,
                     value: BigNumber.from(res.data.exchangeRate.currency.value)
                 }
+            },
+            provider: {
+                enable: res.data.provider.enable,
+                assistant: res.data.provider.assistant
+            },
+            agent: {
+                provision: res.data.agent.provision,
+                refund: res.data.agent.refund,
+                withdrawal: res.data.agent.withdrawal
             },
             ledger: {
                 point: {
@@ -1715,7 +1725,7 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
         const ledgerContract: Ledger = Ledger__factory.connect(this.web3.getLedgerAddress(), signer);
         const provider: string = await signer.getAddress();
         const nonce = await ledgerContract.nonceOf(provider);
-        const message = ContractUtils.getRegisterAssistanceMessage(provider, assistant, nonce, this.web3.getChainId());
+        const message = ContractUtils.getRegisterAgentMessage(provider, assistant, nonce, this.web3.getChainId());
         const signature = await ContractUtils.signMessage(signer, message);
 
         const param = {
@@ -1756,7 +1766,7 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
         const provider: string = await signer.getAddress();
         const assistant = AddressZero;
         const nonce = await ledgerContract.nonceOf(provider);
-        const message = ContractUtils.getRegisterAssistanceMessage(provider, assistant, nonce, this.web3.getChainId());
+        const message = ContractUtils.getRegisterAgentMessage(provider, assistant, nonce, this.web3.getChainId());
         const signature = await ContractUtils.signMessage(signer, message);
 
         const param = {
@@ -1808,5 +1818,296 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
         }
 
         return res.data;
+    }
+
+    public async getAgentOfProvision(): Promise<string> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+        const account: string = await signer.getAddress();
+        const res = await Network.get(await this.relay.getEndpoint(`/v1/agent/provision/${account}`));
+        if (res.code !== 0) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        return res.data.agent;
+    }
+
+    public async *registerAgentOfProvision(agent: string): AsyncGenerator<RegisterAgentStepValue> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+
+        const ledgerContract: Ledger = Ledger__factory.connect(this.web3.getLedgerAddress(), signer);
+        const account: string = await signer.getAddress();
+        const nonce = await ledgerContract.nonceOf(account);
+        const message = ContractUtils.getRegisterAgentMessage(account, agent, nonce, this.web3.getChainId());
+        const signature = await ContractUtils.signMessage(signer, message);
+
+        const param = {
+            account,
+            agent: agent,
+            signature
+        };
+
+        yield {
+            key: NormalSteps.PREPARED,
+            account,
+            agent: agent,
+            signature
+        };
+
+        const res = await Network.post(await this.relay.getEndpoint("/v1/agent/provision"), param);
+        if (res.code !== 0) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        const contractTx = (await signer.provider.getTransaction(res.data.txHash)) as ContractTransaction;
+        yield { key: NormalSteps.SENT, txHash: res.data.txHash, account, agent: agent };
+
+        await contractTx.wait();
+
+        yield { key: NormalSteps.DONE, account, agent: agent };
+    }
+
+    public async *unregisterAgentOfProvision(): AsyncGenerator<RegisterAgentStepValue> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+
+        const ledgerContract: Ledger = Ledger__factory.connect(this.web3.getLedgerAddress(), signer);
+        const account: string = await signer.getAddress();
+        const agent = AddressZero;
+        const nonce = await ledgerContract.nonceOf(account);
+        const message = ContractUtils.getRegisterAgentMessage(account, agent, nonce, this.web3.getChainId());
+        const signature = await ContractUtils.signMessage(signer, message);
+
+        const param = {
+            account,
+            agent,
+            signature
+        };
+
+        yield {
+            key: NormalSteps.PREPARED,
+            account,
+            agent,
+            signature
+        };
+
+        const res = await Network.post(await this.relay.getEndpoint("/v1/agent/provision"), param);
+        if (res.code !== 0) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        const contractTx = (await signer.provider.getTransaction(res.data.txHash)) as ContractTransaction;
+        yield { key: NormalSteps.SENT, txHash: res.data.txHash, account, agent };
+
+        await contractTx.wait();
+
+        yield { key: NormalSteps.DONE, account, agent };
+    }
+
+    public async getAgentOfRefund(): Promise<string> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+        const account: string = await signer.getAddress();
+        const res = await Network.get(await this.relay.getEndpoint(`/v1/agent/refund/${account}`));
+        if (res.code !== 0) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        return res.data.agent;
+    }
+
+    public async *registerAgentOfRefund(agent: string): AsyncGenerator<RegisterAgentStepValue> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+
+        const ledgerContract: Ledger = Ledger__factory.connect(this.web3.getLedgerAddress(), signer);
+        const account: string = await signer.getAddress();
+        const nonce = await ledgerContract.nonceOf(account);
+        const message = ContractUtils.getRegisterAgentMessage(account, agent, nonce, this.web3.getChainId());
+        const signature = await ContractUtils.signMessage(signer, message);
+
+        const param = {
+            account,
+            agent: agent,
+            signature
+        };
+
+        yield {
+            key: NormalSteps.PREPARED,
+            account,
+            agent: agent,
+            signature
+        };
+
+        const res = await Network.post(await this.relay.getEndpoint("/v1/agent/refund"), param);
+        if (res.code !== 0) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        const contractTx = (await signer.provider.getTransaction(res.data.txHash)) as ContractTransaction;
+        yield { key: NormalSteps.SENT, txHash: res.data.txHash, account, agent: agent };
+
+        await contractTx.wait();
+
+        yield { key: NormalSteps.DONE, account, agent: agent };
+    }
+
+    public async *unregisterAgentOfRefund(): AsyncGenerator<RegisterAgentStepValue> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+
+        const ledgerContract: Ledger = Ledger__factory.connect(this.web3.getLedgerAddress(), signer);
+        const account: string = await signer.getAddress();
+        const agent = AddressZero;
+        const nonce = await ledgerContract.nonceOf(account);
+        const message = ContractUtils.getRegisterAgentMessage(account, agent, nonce, this.web3.getChainId());
+        const signature = await ContractUtils.signMessage(signer, message);
+
+        const param = {
+            account,
+            agent,
+            signature
+        };
+
+        yield {
+            key: NormalSteps.PREPARED,
+            account,
+            agent,
+            signature
+        };
+
+        const res = await Network.post(await this.relay.getEndpoint("/v1/agent/refund"), param);
+        if (res.code !== 0) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        const contractTx = (await signer.provider.getTransaction(res.data.txHash)) as ContractTransaction;
+        yield { key: NormalSteps.SENT, txHash: res.data.txHash, account, agent };
+
+        await contractTx.wait();
+
+        yield { key: NormalSteps.DONE, account, agent };
+    }
+
+    public async getAgentOfWithdrawal(): Promise<string> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+        const account: string = await signer.getAddress();
+        const res = await Network.get(await this.relay.getEndpoint(`/v1/agent/withdrawal/${account}`));
+        if (res.code !== 0) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        return res.data.agent;
+    }
+
+    public async *registerAgentOfWithdrawal(agent: string): AsyncGenerator<RegisterAgentStepValue> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+
+        const ledgerContract: Ledger = Ledger__factory.connect(this.web3.getLedgerAddress(), signer);
+        const account: string = await signer.getAddress();
+        const nonce = await ledgerContract.nonceOf(account);
+        const message = ContractUtils.getRegisterAgentMessage(account, agent, nonce, this.web3.getChainId());
+        const signature = await ContractUtils.signMessage(signer, message);
+
+        const param = {
+            account,
+            agent: agent,
+            signature
+        };
+
+        yield {
+            key: NormalSteps.PREPARED,
+            account,
+            agent: agent,
+            signature
+        };
+
+        const res = await Network.post(await this.relay.getEndpoint("/v1/agent/withdrawal"), param);
+        if (res.code !== 0) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        const contractTx = (await signer.provider.getTransaction(res.data.txHash)) as ContractTransaction;
+        yield { key: NormalSteps.SENT, txHash: res.data.txHash, account, agent: agent };
+
+        await contractTx.wait();
+
+        yield { key: NormalSteps.DONE, account, agent: agent };
+    }
+
+    public async *unregisterAgentOfWithdrawal(): AsyncGenerator<RegisterAgentStepValue> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+
+        const ledgerContract: Ledger = Ledger__factory.connect(this.web3.getLedgerAddress(), signer);
+        const account: string = await signer.getAddress();
+        const agent = AddressZero;
+        const nonce = await ledgerContract.nonceOf(account);
+        const message = ContractUtils.getRegisterAgentMessage(account, agent, nonce, this.web3.getChainId());
+        const signature = await ContractUtils.signMessage(signer, message);
+
+        const param = {
+            account,
+            agent,
+            signature
+        };
+
+        yield {
+            key: NormalSteps.PREPARED,
+            account,
+            agent,
+            signature
+        };
+
+        const res = await Network.post(await this.relay.getEndpoint("/v1/agent/withdrawal"), param);
+        if (res.code !== 0) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        const contractTx = (await signer.provider.getTransaction(res.data.txHash)) as ContractTransaction;
+        yield { key: NormalSteps.SENT, txHash: res.data.txHash, account, agent };
+
+        await contractTx.wait();
+
+        yield { key: NormalSteps.DONE, account, agent };
     }
 }

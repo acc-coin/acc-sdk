@@ -386,6 +386,7 @@ export type ShopData = {
     providedAmount: BigNumber; // 제공된 포인트 총량
     usedAmount: BigNumber; // 사용된 포인트 총량
     settledAmount: BigNumber; // 사용된 포인트 - 제공된 포인트
+    collectedAmount: BigNumber; //
     refundedAmount: BigNumber; // 정산이 완료된 포인트 총량
     status: ShopStatus;
 };
@@ -570,6 +571,20 @@ export type RegisterAssistantStepValue =
           assistant: string;
       };
 
+export type RegisterAgentStepValue =
+    | {
+          key: NormalSteps.PREPARED;
+          account: string;
+          agent: string;
+          signature: BytesLike;
+      }
+    | { key: NormalSteps.SENT; account: string; agent: string; txHash: BytesLike }
+    | {
+          key: NormalSteps.DONE;
+          account: string;
+          agent: string;
+      };
+
 export enum LedgerAction {
     NONE = 0,
     SAVED = 1,
@@ -663,15 +678,33 @@ export interface IShopInfo {
     delegator: string;
     providedAmount: BigNumber;
     usedAmount: BigNumber;
+    collectedAmount: BigNumber;
     refundedAmount: BigNumber;
     refundableAmount: BigNumber;
     refundableToken: BigNumber;
+}
+
+export interface IProvisionInfo {
+    enable: boolean;
+    assistant: string;
+}
+
+export interface ISettlementInfo {
+    manager: string;
+}
+
+export interface IAgentInfo {
+    provision: string;
+    refund: string;
+    withdrawal: string;
 }
 
 export interface IAccountSummary {
     account: string;
     tokenInfo: ITokenInfo;
     exchangeRate: IExchangeRate;
+    provider: IProvisionInfo;
+    agent: IAgentInfo;
     ledger: IBalance;
     mainChain: IBalance;
     sideChain: IBalance;
@@ -682,6 +715,8 @@ export interface IShopSummary {
     shopInfo: IShopInfo;
     tokenInfo: ITokenInfo;
     exchangeRate: IExchangeRate;
+    settlement: ISettlementInfo;
+    agent: IAgentInfo;
     ledger: IBalance;
     mainChain: IBalance;
     sideChain: IBalance;
@@ -691,15 +726,15 @@ export interface IShopSummary {
 export interface ISystemInfo {
     token: {
         symbol: string;
-    },
+    };
     point: {
-        precision: number,
+        precision: number;
         equivalentCurrency: string;
-    },
-    language: string,
+    };
+    language: string;
     support: {
-        chainBridge: boolean,
-        loyaltyBridge: boolean,
-        exchange: boolean
-    }
+        chainBridge: boolean;
+        loyaltyBridge: boolean;
+        exchange: boolean;
+    };
 }

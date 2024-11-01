@@ -20,6 +20,7 @@ async function main() {
     console.log(`   - delegator: ${summary.shopInfo.delegator}`);
     console.log(`   - providedAmount: ${new BOACoin(summary.shopInfo.providedAmount).toDisplayString(true, 4)}`);
     console.log(`   - usedAmount: ${new BOACoin(summary.shopInfo.usedAmount).toDisplayString(true, 4)}`);
+    console.log(`   - collectedAmount: ${new BOACoin(summary.shopInfo.collectedAmount).toDisplayString(true, 4)}`);
     console.log(`   - refundedAmount: ${new BOACoin(summary.shopInfo.refundedAmount).toDisplayString(true, 4)}`);
     console.log(`   - refundableAmount: ${new BOACoin(summary.shopInfo.refundableAmount).toDisplayString(true, 4)}`);
     console.log(`   - refundableToken: ${new BOACoin(summary.shopInfo.refundableToken).toDisplayString(true, 4)}`);
@@ -35,6 +36,14 @@ async function main() {
     console.log(`   - currency:`);
     console.log(`       - symbol: ${summary.exchangeRate.currency.symbol}`);
     console.log(`       - value: ${new BOACoin(summary.exchangeRate.currency.value).toDisplayString(true, 4)}`);
+
+    console.log(`- settlement`);
+    console.log(`   - manager: ${summary.settlement.manager}`);
+
+    console.log(`- agent`);
+    console.log(`   - provision: ${summary.agent.provision}`);
+    console.log(`   - refund: ${summary.agent.refund}`);
+    console.log(`   - withdrawal: ${summary.agent.withdrawal}`);
 
     console.log(`- ledger`);
     console.log(`   - point.balance: ${new BOACoin(summary.ledger.point.balance).toDisplayString(true, 4)}`);

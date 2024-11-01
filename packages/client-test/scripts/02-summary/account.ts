@@ -25,6 +25,15 @@ async function main() {
     console.log(`       - symbol: ${summary.exchangeRate.currency.symbol}`);
     console.log(`       - value: ${new BOACoin(summary.exchangeRate.currency.value).toDisplayString(true, 4)}`);
 
+    console.log(`- provision`);
+    console.log(`   - enable: ${summary.provider.enable}`);
+    console.log(`   - assistant: ${summary.provider.assistant}`);
+
+    console.log(`- agent`);
+    console.log(`   - provision: ${summary.agent.provision}`);
+    console.log(`   - refund: ${summary.agent.refund}`);
+    console.log(`   - withdrawal: ${summary.agent.withdrawal}`);
+
     console.log(`- ledger`);
     console.log(`   - point.balance: ${new BOACoin(summary.ledger.point.balance).toDisplayString(true, 4)}`);
     console.log(`   - point.value: ${new BOACoin(summary.ledger.point.value).toDisplayString(true, 4)}`);

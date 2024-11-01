@@ -2,7 +2,6 @@ import { AccountIndex, NodeInfo } from "../helper/NodeInfo";
 import { Amount, Client, Context, ContractUtils, NormalSteps, WaiteBridgeSteps } from "../../src";
 
 import * as fs from "fs";
-import { Wallet } from "@ethersproject/wallet";
 
 interface IUserData {
     idx: number;

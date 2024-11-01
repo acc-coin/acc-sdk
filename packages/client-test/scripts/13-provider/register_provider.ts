@@ -1,8 +1,5 @@
 import { Helper } from "../utils";
 import { Client, Context, ContextBuilder } from "acc-sdk-client-v2";
-import { BOACoin } from "../../src/Amount";
-import { Ledger, Ledger__factory } from "acc-contracts-lib-v2";
-import { Wallet } from "ethers";
 
 async function main() {
     const userInfo = Helper.loadUserInfo();

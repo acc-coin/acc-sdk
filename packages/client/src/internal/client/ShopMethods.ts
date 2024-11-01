@@ -57,8 +57,8 @@ export class ShopMethods extends ClientCore implements IShopMethods {
 
         const shopContract: Shop = Shop__factory.connect(this.web3.getShopAddress(), provider);
         const shopInfo = await shopContract.shopOf(shopId);
-        const settledAmount = shopInfo.usedAmount.gt(shopInfo.providedAmount)
-            ? shopInfo.usedAmount.sub(shopInfo.providedAmount)
+        const settledAmount = shopInfo.collectedAmount.add(shopInfo.usedAmount).gt(shopInfo.providedAmount)
+            ? shopInfo.collectedAmount.add(shopInfo.usedAmount).sub(shopInfo.providedAmount)
             : BigNumber.from(0);
         return {
             shopId: shopInfo.shopId,
@@ -68,6 +68,7 @@ export class ShopMethods extends ClientCore implements IShopMethods {
             delegator: shopInfo.delegator,
             providedAmount: shopInfo.providedAmount,
             usedAmount: shopInfo.usedAmount,
+            collectedAmount: shopInfo.collectedAmount,
             settledAmount,
             refundedAmount: shopInfo.refundedAmount,
             status: shopInfo.status
@@ -75,7 +76,7 @@ export class ShopMethods extends ClientCore implements IShopMethods {
     }
 
     public async getSummary(shopId: BytesLike): Promise<IShopSummary> {
-        const res = await Network.get(await this.relay.getEndpoint(`/v1/summary/shop/${shopId}`));
+        const res = await Network.get(await this.relay.getEndpoint(`/v2/summary/shop/${shopId}`));
         if (res.code !== 0 || res.data === undefined) {
             throw new InternalServerError(res?.error?.message ?? "");
         }
@@ -90,6 +91,7 @@ export class ShopMethods extends ClientCore implements IShopMethods {
                 delegator: res.data.shopInfo.delegator,
                 providedAmount: BigNumber.from(res.data.shopInfo.providedAmount),
                 usedAmount: BigNumber.from(res.data.shopInfo.usedAmount),
+                collectedAmount: BigNumber.from(res.data.shopInfo.collectedAmount),
                 refundedAmount: BigNumber.from(res.data.shopInfo.refundedAmount),
                 refundableAmount: BigNumber.from(res.data.shopInfo.refundableAmount),
                 refundableToken: BigNumber.from(res.data.shopInfo.refundableToken)
@@ -108,6 +110,14 @@ export class ShopMethods extends ClientCore implements IShopMethods {
                     symbol: res.data.exchangeRate.currency.symbol,
                     value: BigNumber.from(res.data.exchangeRate.currency.value)
                 }
+            },
+            settlement: {
+                manager: res.data.settlement.manager
+            },
+            agent: {
+                provision: res.data.agent.provision,
+                refund: res.data.agent.refund,
+                withdrawal: res.data.agent.withdrawal
             },
             ledger: {
                 point: {
@@ -455,13 +465,7 @@ export class ShopMethods extends ClientCore implements IShopMethods {
         const account: string = await signer.getAddress();
         const adjustedAmount = ContractUtils.zeroGWEI(amount);
         const nonce = await shopContract.nonceOf(account);
-        const message = ContractUtils.getShopRefundMessage(
-            shopId,
-            account,
-            adjustedAmount,
-            nonce,
-            this.web3.getChainId()
-        );
+        const message = ContractUtils.getShopRefundMessage(shopId, adjustedAmount, nonce, this.web3.getChainId());
         const signature = await ContractUtils.signMessage(signer, message);
 
         const param = {

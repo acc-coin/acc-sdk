@@ -13,7 +13,7 @@ async function main() {
 
     const contractOwner = new Wallet(process.env.CONTRACT_OWNER || "", client.web3.getProvider());
     const ledgerContract: Ledger = Ledger__factory.connect(client.web3.getLedgerAddress(), contractOwner);
-    await ledgerContract.registerProvider(userInfo.wallet.address);
+    await ledgerContract.unregisterProvider(userInfo.wallet.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
