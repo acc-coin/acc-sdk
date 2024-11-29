@@ -67,7 +67,7 @@ import { findLog } from "../../client-common/utils";
 
 import { BigNumber } from "@ethersproject/bignumber";
 import { ContractTransaction } from "@ethersproject/contracts";
-import { AddressZero } from "@ethersproject/constants";
+import { AddressZero, HashZero } from "@ethersproject/constants";
 import { BytesLike } from "@ethersproject/bytes";
 
 /**
@@ -853,12 +853,14 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
      * @param language
      * @param os
      * @param type
+     * @param shopId
      */
     public async registerMobileToken(
         token: string,
         language: string,
         os: string,
-        type: MobileType = MobileType.USER_APP
+        type: MobileType = MobileType.USER_APP,
+        shopId: string = HashZero
     ): Promise<void> {
         const signer = this.web3.getConnectedSigner();
         if (!signer) {
@@ -872,6 +874,7 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
             account: await signer.getAddress(),
             type,
             token,
+            shopId,
             language,
             os,
             signature
@@ -886,8 +889,9 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
     /**
      * 모바일의 정보를 등록한다
      * @param type
+     * @param shopId
      */
-    public async isExistsMobileToken(type: MobileType = MobileType.USER_APP): Promise<boolean> {
+    public async isExistsMobileToken(type: MobileType = MobileType.USER_APP, shopId: string = HashZero): Promise<boolean> {
         const signer = this.web3.getConnectedSigner();
         if (!signer) {
             throw new NoSignerError();
@@ -896,7 +900,8 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
         }
 
         const res = await Network.get(await this.relay.getEndpoint(`/v1/mobile/exists/${await signer.getAddress()}`), {
-            type
+            type,
+            shopId
         });
         if (res.code !== 0) {
             throw new InternalServerError(res?.error?.message ?? "");

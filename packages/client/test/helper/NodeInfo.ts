@@ -98,8 +98,10 @@ export interface IContractInfo {
 
 export class NodeInfo {
     public static initialAccounts: any[];
-    public static RELAY_ACCESS_KEY = process.env.RELAY_ACCESS_KEY || "";
     public static NETWORK_NAME: SupportedNetwork = (process.env.NETWORK_NAME || "acc_devnet") as SupportedNetwork;
+    public static RELAY_ACCESS_KEY = process.env.RELAY_ACCESS_KEY || "";
+    public static RELAY_ENDPOINT = process.env.RELAY_ENDPOINT || "";
+    public static WEB3_ENDPOINT = process.env.WEB3_ENDPOINT || "";
 
     public static CreateInitialAccounts(): any[] {
         const accounts: string[] = [];
@@ -484,7 +486,15 @@ export class NodeInfo {
             NodeInfo.initialAccounts = NodeInfo.CreateInitialAccounts();
         }
         const networkName = this.NETWORK_NAME;
-        return ContextBuilder.buildContextParams(networkName, NodeInfo.initialAccounts[0].secretKey);
+        const contextParams = ContextBuilder.buildContextParams(networkName, NodeInfo.initialAccounts[0].secretKey);
+
+        if (NodeInfo.RELAY_ENDPOINT !== "") contextParams.relayEndpoint = NodeInfo.RELAY_ENDPOINT;
+        if (NodeInfo.WEB3_ENDPOINT !== "") contextParams.web3Provider = NodeInfo.WEB3_ENDPOINT;
+
+        console.log(`RELAY_ENDPOINT : ${contextParams.relayEndpoint}`);
+        console.log(`WEB3_ENDPOINT : ${contextParams.web3Provider}`);
+
+        return contextParams;
     }
 
     public static getChainId(): number {

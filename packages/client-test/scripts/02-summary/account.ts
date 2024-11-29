@@ -25,7 +25,7 @@ async function main() {
     console.log(`       - symbol: ${summary.exchangeRate.currency.symbol}`);
     console.log(`       - value: ${new BOACoin(summary.exchangeRate.currency.value).toDisplayString(true, 4)}`);
 
-    console.log(`- provision`);
+    console.log(`- provider`);
     console.log(`   - enable: ${summary.provider.enable}`);
     console.log(`   - assistant: ${summary.provider.assistant}`);
 
