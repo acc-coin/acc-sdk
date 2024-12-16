@@ -77,8 +77,15 @@ export interface ILedgerMethods extends IClientCore {
     waiteWithdrawViaBridge: (depositId: string, timeout?: number) => AsyncGenerator<WaiteBridgeStepValue>;
 
     // Mobile
-    registerMobileToken: (token: string, language: string, os: string, type: MobileType, shopId?: string) => Promise<void>;
+    registerMobileToken: (
+        token: string,
+        language: string,
+        os: string,
+        type: MobileType,
+        shopId?: string
+    ) => Promise<void>;
     isExistsMobileToken: (type: MobileType, shopId?: string) => Promise<boolean>;
+    isExistsMobileAccountToken: (token: string, type: MobileType, shopId?: string) => Promise<boolean>;
     removePhoneInfo: () => AsyncGenerator<RemovePhoneInfoStepValue>;
 
     // Main Chain

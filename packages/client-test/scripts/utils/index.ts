@@ -10,11 +10,13 @@ import { SupportedNetwork } from "acc-sdk-client-v2";
 export interface IUserInfo {
     phone: string;
     wallet: Wallet;
+    token: string;
 }
 
 export interface IShopInfo {
     shopId: string;
     wallet: Wallet;
+    token: string;
 }
 
 export class Helper {
@@ -30,10 +32,12 @@ export class Helper {
         const data: {
             phone: string;
             privateKey: string;
+            token: string;
         } = JSON.parse(fs.readFileSync("./data/user_info.json", "utf8"));
         return {
             phone: data.phone,
             wallet: new Wallet(data.privateKey),
+            token: data.token,
         };
     }
 
@@ -41,10 +45,12 @@ export class Helper {
         const data: {
             shopId: string;
             privateKey: string;
+            token: string;
         } = JSON.parse(fs.readFileSync("./data/shop_info.json", "utf8"));
         return {
             shopId: data.shopId,
             wallet: new Wallet(data.privateKey),
+            token: data.token,
         };
     }
 
@@ -56,6 +62,7 @@ export class Helper {
         return {
             phone: data.phone,
             wallet: new Wallet(data.privateKey),
+            token: "",
         };
     }
     static purchaseId = 0;

@@ -891,7 +891,10 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
      * @param type
      * @param shopId
      */
-    public async isExistsMobileToken(type: MobileType = MobileType.USER_APP, shopId: string = HashZero): Promise<boolean> {
+    public async isExistsMobileToken(
+        type: MobileType = MobileType.USER_APP,
+        shopId: string = HashZero
+    ): Promise<boolean> {
         const signer = this.web3.getConnectedSigner();
         if (!signer) {
             throw new NoSignerError();
@@ -903,6 +906,39 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
             type,
             shopId
         });
+        if (res.code !== 0) {
+            throw new InternalServerError(res?.error?.message ?? "");
+        }
+
+        return res.data.exists;
+    }
+
+    /**
+     * 모바일의 정보를 등록한다
+     * @param token
+     * @param type
+     * @param shopId
+     */
+    public async isExistsMobileAccountToken(
+        token: string,
+        type: MobileType = MobileType.USER_APP,
+        shopId: string = HashZero
+    ): Promise<boolean> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+
+        const param = {
+            account: await signer.getAddress(),
+            type,
+            shopId,
+            token
+        };
+
+        const res = await Network.post(await this.relay.getEndpoint(`/v1/mobile/exists/token`), param);
         if (res.code !== 0) {
             throw new InternalServerError(res?.error?.message ?? "");
         }

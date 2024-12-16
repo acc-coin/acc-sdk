@@ -36,6 +36,7 @@
         "81-bridge:withdrawal": "npx ts-node scripts/08-bridge/withdrawal.ts",
         "82-bridge:deposit": "npx ts-node scripts/08-bridge/deposit.ts",
         "91-mobile:exists": "npx ts-node scripts/09-mobile/exists.ts",
+        "91-mobile:exists_token": "npx ts-node scripts/09-mobile/exists_token.ts",
         "10-account:check": "npx ts-node scripts/10-account/check.ts",
         "11-history:user_account": "npx ts-node scripts/11-history/user_account.ts",
         "11-history:user_phone": "npx ts-node scripts/11-history/user_phone.ts",
