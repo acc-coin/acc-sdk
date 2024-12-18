@@ -43,6 +43,10 @@ export interface IShopMethods extends IClientCore {
     getShops: (from: number, to: number) => Promise<BytesLike[]>;
     getShopsCount: () => Promise<BigNumber>;
 
+    // List
+    getShopsByAccount: (account: string, from: number, to: number) => Promise<BytesLike[]>;
+    getShopsCountByAccount: (account: string) => Promise<BigNumber>;
+
     // Delegate
     createDelegate: (shopId: BytesLike) => AsyncGenerator<CreateDelegateStepValue>;
     removeDelegate: (shopId: BytesLike) => AsyncGenerator<RemoveDelegateStepValue>;

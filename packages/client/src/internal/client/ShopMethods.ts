@@ -538,6 +538,22 @@ export class ShopMethods extends ClientCore implements IShopMethods {
         const account: string = await signer.getAddress();
         return await shopContract.getShopsCountOfAccount(account);
     }
+
+    public async getShopsByAccount(account: string, from: number, to: number): Promise<BytesLike[]> {
+        const provider = this.web3.getProvider() as Provider;
+        if (!provider) throw new NoProviderError();
+
+        const shopContract: Shop = Shop__factory.connect(this.web3.getShopAddress(), provider);
+        return await shopContract.getShopsOfAccount(account, BigNumber.from(from), BigNumber.from(to));
+    }
+
+    public async getShopsCountByAccount(account: string): Promise<BigNumber> {
+        const provider = this.web3.getProvider() as Provider;
+        if (!provider) throw new NoProviderError();
+
+        const shopContract: Shop = Shop__factory.connect(this.web3.getShopAddress(), provider);
+        return await shopContract.getShopsCountOfAccount(account);
+    }
     // endregion
 
     // region Delegate
