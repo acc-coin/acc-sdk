@@ -114,6 +114,7 @@ export interface ILedgerMethods extends IClientCore {
     getSaveAndUseHistory: (account: string, pageNumber?: number, pageSize?: number) => Promise<any>;
     getDepositAndWithdrawHistory: (account: string, pageNumber?: number, pageSize?: number) => Promise<any>;
     getTransferHistory: (account: string, pageNumber?: number, pageSize?: number) => Promise<any>;
+    getProvideHistory: (account: string, pageNumber?: number, pageSize?: number) => Promise<any>;
     getEstimatedSaveHistory: (account: string) => Promise<any>;
     getTotalEstimatedSaveHistory: (account: string) => Promise<any>;
 

@@ -1662,6 +1662,21 @@ export class LedgerMethods extends ClientCore implements ILedgerMethods {
             pageSize
         );
     }
+
+    /**
+     * 사용자의 포인트제공 내역을 제공한다.
+     * @param account 사용자의 지갑주소
+     * @param pageNumber 페이지번호 1부터 시작됨
+     * @param pageSize 페이지당 항목의 갯수
+     */
+    public async getProvideHistory(account: string, pageNumber: number = 1, pageSize: number = 10): Promise<any> {
+        return await this.getAccountHistory(
+            account,
+            [LedgerAction.PROVIDE_OUT],
+            pageNumber,
+            pageSize
+        );
+    }
     // endregion
 
     // region History of Main Chain

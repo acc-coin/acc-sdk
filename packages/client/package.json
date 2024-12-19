@@ -1,6 +1,6 @@
 {
   "name": "acc-sdk-client-v2",
-  "version": "2.15.1",
+  "version": "2.15.2",
   "author": "BOSagora Foundation",
   "license": "AGPL-3.0-or-later",
   "main": "dist/index.js",

@@ -597,7 +597,8 @@ export enum LedgerAction {
     CHANGED_TO_POINT = 23,
     REFUND = 31,
     TRANSFER_IN = 41,
-    TRANSFER_OUT = 42
+    TRANSFER_OUT = 42,
+    PROVIDE_OUT = 52
 }
 
 export enum ShopAction {
