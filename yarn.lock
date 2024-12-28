@@ -1975,10 +1975,10 @@ acc-contracts-lib-v2@~2.10.0:
   dependencies:
     ethers "5.7.0"
 
-acc-contracts-lib-v2@~2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/acc-contracts-lib-v2/-/acc-contracts-lib-v2-2.11.0.tgz#654665aa2d097301f8f3a67e897a380f348462ca"
-  integrity sha512-5WczkWq9qtxLPGpVV5jTb75HILHRnLMr+byOsw48+yylPEVawVB9h85/p8lGiqH/lSr7ao0ScUAB+/Ckf0AQ5g==
+acc-contracts-lib-v2@~2.12.0:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/acc-contracts-lib-v2/-/acc-contracts-lib-v2-2.12.0.tgz#e1c9fc703a57aeae1137b0e9afb9847e6b275351"
+  integrity sha512-Tw8Oa4uPcxctQY+J61qj8JoOp4nrpDn4ZlNRwqrxEJFuVGsxNfmqqUqc3UST5oGsSPY4l1S7MtPeVxndCL4ZEQ==
   dependencies:
     ethers "5.7.0"
 
